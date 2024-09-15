@@ -47,7 +47,7 @@ const Productlist = () => {
   }, []);
 
   const productState = useSelector((state) => state.product.products);
-  //console.log(productState);
+  console.log(productState);
   const data1 = [];
   for (let i = 0; i < productState.length; i++) {
     data1.push({
@@ -55,7 +55,7 @@ const Productlist = () => {
       title: productState[i].title,
       brand: productState[i].brand,
       category: productState[i].category,
-      color: productState[i].color,
+      color: productState[i].color?.map((c) => c.color).join(", "),
       price: `${productState[i].price}`,
       action: (
         <>

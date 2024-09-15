@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, createAction } from "@reduxjs/toolkit";
 import bCategoryService from "./bcategoryService";
 
 const initialState = {
@@ -20,6 +20,19 @@ export const getCategories = createAsyncThunk(
   }
 );
 
+export const createNewblogCat = createAsyncThunk(
+  "blogCategory/create-category",
+  async (catData, thunkAPI) => {
+    try {
+      return await bCategoryService.createBlogCategory(catData);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+export const resetState = createAction("Reset_all");
+
 export const bCategorySlice = createSlice({
   name: "bCategories",
   initialState,
@@ -40,7 +53,23 @@ export const bCategorySlice = createSlice({
         state.isError = true;
         state.isSuccess = false;
         state.message = action.error;
-      });
+      })
+      .addCase(createNewblogCat.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(createNewblogCat.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isError = false;
+        state.isSuccess = true;
+        state.createBlogCategory = action.payload;
+      })
+      .addCase(createNewblogCat.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.message = action.error;
+      })
+      .addCase(resetState, () => initialState);
   },
 });
 
